@@ -27,7 +27,8 @@
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/node_modules/**"
+                "${workspaceFolder}/node_modules/**",
+                "/Users/xiaoyi/.nvm/versions/node/v20.12.2/include/node/**"
             ]
         }
     ],

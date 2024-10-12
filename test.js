@@ -3,7 +3,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 
 console.log("获取类型：",clipboard.getContentType())
-
+// console.log("清理剪切板",clipboard.clear())
 // console.log("clipboard",clipboard);
 // function extractFragment(html) {
 //     const regex = /<!--StartFragment-->([\s\S]*?)<!--EndFragment-->/;

@@ -3,7 +3,8 @@
         {
             "target_name": "ClipboardEx",
             "sources": [ 
-                "src/main.cpp"
+                # "src/main.cpp"
+                "src/mac.cpp"
             ],
             "include_dirs": [
                 "include",
@@ -47,7 +48,7 @@
                     'OS=="mac"',
                     {
                         'sources': [ 
-                            # "src/mac/common.cpp",
+                            "src/mac/common.mm",
                             # "src/mac/file.cpp",
                             # "src/mac/image.cpp",
                             # "src/mac/text_read.cpp",

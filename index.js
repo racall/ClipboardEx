@@ -1,4 +1,5 @@
 const {
+    clear,
     getContentType,
     readText,
     readHTML,
@@ -12,6 +13,7 @@ const {
 } = require('node-gyp-build')(__dirname)
 
 module.exports = {
+    clear,
     getContentType,
     readText,
     readHTML,
