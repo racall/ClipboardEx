@@ -4,11 +4,6 @@ declare module "clipboardex" {
      */
     export function clear(): boolean;
 
-    /**
-     * 保存剪贴板图片到文件
-     * @param filePath 文件路径
-     */
-    export function saveImageToFile(filePath: string): boolean;
 
     /**
      * 读取剪贴板文本
@@ -44,23 +39,23 @@ declare module "clipboardex" {
      */
     export function writeFiles(files: string[]): boolean;
 
-    interface BitmapData {
+    interface ImageData {
         width: number;
         height: number;
-        pixels: Uint8Array;
+        size: number;
+        data: Uint8Array;
     }
-
     /**
      * 读取剪贴板图片
-     * @return 包含宽度、高度和像素数据的对象
+     * @return ImageData 包含宽度、高度、大小、像素数据的对象
      */
-    export function readImage(): BitmapData;
+    export function readImage(): ImageData;
 
     /**
      * 写入剪贴板图片
-     * @param image 包含宽度、高度和像素数据的对象
+     * @param image 图片数据
      */
-    export function writeImage(image: BitmapData): boolean;
+    export function writeImage(image: Buffer): boolean;
 
     /**
      * Represents the result of getting a file icon.
