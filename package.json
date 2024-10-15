@@ -13,11 +13,6 @@
     "install": "npx node-gyp-build",
     "prebuild": "node build.js"
   },
-  "binary": {
-    "module_name": "clipboardex",
-    "module_path": "./build/Release",
-    "host": "https://x.0os.io"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
