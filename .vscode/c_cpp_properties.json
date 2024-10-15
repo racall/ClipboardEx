@@ -5,20 +5,17 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/node_modules/**",
-                "C:/Users/brian/AppData/Local/node-gyp/Cache/18.17.1/include/**",
-                // "C:/Users/brian/AppData/Local/node-gyp/Cache/18.17.1/include/**/*",
+                "${userHome}/AppData/Local/node-gyp/Cache/18.17.1/include/**",
                 "D:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.29.30133/include/**",
-                // "D:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.29.30133/include/**/*",
                 "D:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/Llvm/x64/lib/clang/16/include/**",
                 "D:/Windows Kits/10/Include/**"
-                // "D:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/Llvm/x64/lib/clang/16/include/**/*"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\Users\\brian\\AppData\\Local\\Programs\\Swift\\Toolchains\\0.0.0+Asserts\\usr\\bin\\clang.exe",
+            "compilerPath": "D:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\Llvm\\x64\\bin\\c\\clang.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "windows-clang-x64"
@@ -28,7 +25,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/node_modules/**",
-                "/Users/xiaoyi/.nvm/versions/node/v20.12.2/include/node/**"
+                "${userHome}/.nvm/versions/node/v20.12.2/include/node/**"
             ]
         }
     ],

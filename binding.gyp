@@ -2,20 +2,13 @@
     "targets": [
         {
             "target_name": "ClipboardEx",
-            "sources": [ 
-                # "src/main.cpp"
-                "src/mac.cpp"
+            "sources": [
+                "src/exports.cpp"
             ],
             "include_dirs": [
                 "include",
                 "<!@(node -p \"require('node-addon-api').include\")"
             ],
-            # "msvs_settings": {
-            #     "VCCLCompilerTool": {
-            #     "ExceptionHandling": 1,
-            #     "AdditionalOptions": ["/std:c++11"]
-            #     }
-            # },
             # "cflags": ["-m", "-EHsc"],
             # "cflags_cc": ["-std=c++11"],
             "cflags!": [ "-fno-exceptions" ],
@@ -49,10 +42,10 @@
                     {
                         'sources': [ 
                             "src/mac/common.mm",
-                            # "src/mac/file.cpp",
-                            # "src/mac/image.cpp",
-                            # "src/mac/text_read.cpp",
-                            # "src/mac/text_write.cpp"
+                            "src/mac/file.cpp",
+                            "src/mac/image.cpp",
+                            "src/mac/text_read.cpp",
+                            "src/mac/text_write.cpp"
                         ],
                         'link_settings': {
                             'libraries': [

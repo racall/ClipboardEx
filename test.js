@@ -1,8 +1,70 @@
 const clipboard = require('./index');
 const sharp = require('sharp');
 const fs = require('fs');
+function getType() {
+    console.log("获取类型：",clipboard.getContentType())
+}
 
-console.log("获取类型：",clipboard.getContentType())
+function clear() {
+    console.log("清理剪切板",clipboard.clear())
+}
+
+function getText() {
+    console.log("读取剪切板文本:");
+    console.log(clipboard.readText())
+}
+
+function getHtml() {
+    console.log("读取剪切板html:");
+    console.log(clipboard.readHTML())
+}
+
+function setText(){
+    console.log("写入文本到剪切板：",clipboard.writeText("Hello from Node.js!"))
+}
+
+function getFiles() {
+    console.log("读取剪切板文件:");
+    console.log(clipboard.readFiles());
+}
+
+function setFiles(files) {
+    console.log("写入文件到剪切板：",clipboard.writeFiles(files))
+}
+
+function getImage() {
+    try {
+        console.log("\n读取剪贴板中的图片:");
+        const image = clipboard.readImage();
+        console.log("img: ", image);
+        if (image.width > 0 && image.height > 0) {
+            console.log(`图片尺寸: ${image.width}x${image.height}`);
+            console.log(`图片数据长度: ${image.data.length} 字节`);
+            fs.writeFileSync('clipboard_image_verify.png', image.data);
+            // console.log('Image data saved to clipboard_image_verify.png');
+            // clipboard.writeText("Hello from Node.js!");
+            // let a = fs.readFileSync('clipboard_image_verify.png');
+            // console.log("读取图片数据:", a);
+            const dataUrl = `data:image/png;base64,${image.data.toString("base64")}`;
+            console.log(dataUrl,"\n",Buffer.from(image.data.toString("base64"),"base64"));
+            // setTimeout(() => {
+            //     const a = clipboard.writeImage(image.data);
+            //     console.log("写入剪贴板",a);
+            // }, 15000);
+        } else {
+            console.log("剪贴板中没有图片");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+getImage();
+setTimeout(() => {
+    getType();
+}, 1000);
+
+
+
 // console.log("清理剪切板",clipboard.clear())
 // console.log("clipboard",clipboard);
 // function extractFragment(html) {
@@ -11,8 +73,7 @@ console.log("获取类型：",clipboard.getContentType())
 
 //     return match ? match[1].trim() : '';
 // }
-// console.log("读取剪切板文本:");
-// console.log(clipboard.readText());
+
 
 // console.log("\nWriting text to clipboard...");
 // clipboard.writeText("Hello from Node.js!");
@@ -55,30 +116,7 @@ console.log("获取类型：",clipboard.getContentType())
 //     // 将 Buffer 转换为 base64 字符串
 //     return buffer.toString('base64');
 // }
-// try {
-//     console.log("\n读取剪贴板中的图片:");
-//     const image = clipboard.readImage();
-//     console.log("img: ", image);
-//     if (image.width > 0 && image.height > 0) {
-//         console.log(`图片尺寸: ${image.width}x${image.height}`);
-//         console.log(`图片数据长度: ${image.data.length} 字节`);
-//         fs.writeFileSync('clipboard_image_verify.png', image.data);
-//         console.log('Image data saved to clipboard_image_verify.png');
-//         clipboard.writeText("Hello from Node.js!");
-//         let a = fs.readFileSync('clipboard_image_verify.png');
-//         console.log("读取图片数据:", a);
-//         // const dataUrl = `data:image/png;base64,${image.data.toString("base64")}`;
-//         // console.log(dataUrl,"\n",Buffer.from(image.data.toString("base64"),"base64"));
-//         setTimeout(() => {
-//             const a = clipboard.writeImage(image.data);
-//             console.log("写入剪贴板",a);
-//         }, 15000);
-//     } else {
-//         console.log("剪贴板中没有图片");
-//     }
-// } catch (error) {
-//     console.error("Error:", error);
-// }
+
 
 
 // const savePath = "./image.png";

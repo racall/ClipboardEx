@@ -10,19 +10,19 @@
 #include <memory>
 #include <iostream>
 
-// struct ImageData {
-//     int width;
-//     int height;
-//     size_t size;
-//     std::vector<unsigned char> data;
-// };
+struct ImageData {
+    int width;
+    int height;
+    size_t size;
+    std::vector<unsigned char> data;
+};
 
 
-// struct FileInfo {
-//     std::wstring path;
-//     std::wstring name;
-//     uintmax_t size;
-// };
+struct FileInfox {
+    std::string path;
+    std::string name;
+    uintmax_t size;
+};
 
 
 // struct IconData {
@@ -42,20 +42,19 @@ enum class ClipboardContentType {
 };
 
 ClipboardContentType GetClipboardContentType();
-
+bool clearClipboard();
+std::string ReadTextFromClipboard();
+std::string ReadHTMLFromClipboard();
+bool WriteTextToClipboard(const std::string& text);
 // IconData GetFileIconData(const std::wstring& filePath);
 // void FreeIconData(IconData& iconData);
 
 // std::wstring Utf8ToWstring(const std::string& str);
 // std::string WstringToUtf8(const std::wstring& wstr);
-bool clearClipboard();
-// std::wstring ReadTextFromClipboard();
-// std::wstring ReadHTMLFromClipboard();
-// bool WriteTextToClipboard(const std::wstring& text);
 
-// std::vector<FileInfo> ReadFilesFromClipboard();
-// bool WriteFilesToClipboard(const std::vector<std::wstring>& files);
+std::vector<FileInfox> ReadFilesFromClipboard();
+bool WriteFilesToClipboard(const std::vector<std::string>& files);
 
-// ImageData ReadImageFromClipboard();
+ImageData ReadImageFromClipboard();
 // bool WriteImageToClipboard(const uint8_t* buffer, size_t bufferSize);
 
