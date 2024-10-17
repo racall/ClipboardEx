@@ -1,6 +1,8 @@
+// console.log(process.cwd(),process.env);
 const clipboard = require('./index');
 const sharp = require('sharp');
 const fs = require('fs');
+
 function getType() {
     console.log("获取类型：",clipboard.getContentType())
 }
@@ -31,7 +33,16 @@ function getFiles() {
 function setFiles(files) {
     console.log("写入文件到剪切板：",clipboard.writeFiles(files))
 }
-
+function writeImageToFile(buffer,path) {
+    fs.writeFileSync(path, buffer);
+    console.log(`Image data saved to ${path}`);
+}
+function convertBase64URL(buffer) {
+    const dataUrl = `data:image/png;base64,${buffer.toString("base64")}`;
+    // ,Buffer.from(image.data.toString("base64"),"base64")
+    console.log(dataUrl,"\n");
+    return dataUrl;
+}
 function getImage() {
     try {
         console.log("\n读取剪贴板中的图片:");
@@ -40,17 +51,7 @@ function getImage() {
         if (image.width > 0 && image.height > 0) {
             console.log(`图片尺寸: ${image.width}x${image.height}`);
             console.log(`图片数据长度: ${image.data.length} 字节`);
-            fs.writeFileSync('clipboard_image_verify.png', image.data);
-            // console.log('Image data saved to clipboard_image_verify.png');
-            // clipboard.writeText("Hello from Node.js!");
-            // let a = fs.readFileSync('clipboard_image_verify.png');
-            // console.log("读取图片数据:", a);
-            const dataUrl = `data:image/png;base64,${image.data.toString("base64")}`;
-            console.log(dataUrl,"\n",Buffer.from(image.data.toString("base64"),"base64"));
-            // setTimeout(() => {
-            //     const a = clipboard.writeImage(image.data);
-            //     console.log("写入剪贴板",a);
-            // }, 15000);
+            writeImageToFile(image.data, '/Users/xiaoyi/dev/node/ClipboardEx/clipboard_image_verify.png');
         } else {
             console.log("剪贴板中没有图片");
         }
@@ -58,7 +59,24 @@ function getImage() {
         console.error("Error:", error);
     }
 }
-getImage();
+function getFileIcon() {
+    console.log("\n读取剪贴板中的文件图标:");
+    const icon = clipboard.getFileIcon("/Users/xiaoyi/dev/node/ClipboardEx/package.json");
+    console.log("icon: ", icon);
+    if (icon.width > 0 && icon.height > 0) {
+        console.log(`图标尺寸: ${icon.width}x${icon.height}`);
+        console.log(`图标数据长度: ${icon.buffer.length} 字节`);
+        // convertBase64URL(icon.buffer);
+        const c = clipboard.writeImage(icon.buffer);
+        console.log("写入剪贴板",c);
+    }
+}
+getFileIcon();
+// getFiles();
+// getImage();
+// let a = fs.readFileSync('/Users/xiaoyi/dev/node/ClipboardEx/clipboard_image_verify.png');
+// const c = clipboard.writeImage(a);
+// console.log("写入剪贴板",c);
 setTimeout(() => {
     getType();
 }, 1000);

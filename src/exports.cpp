@@ -79,7 +79,7 @@ Napi::Array ReadFilesFromClipboardWrapped(const Napi::CallbackInfo& info) {
     std::vector<FileInfox> files = ReadFilesFromClipboard();
     Napi::Array result = Napi::Array::New(env, files.size());
 
-    for (size_t i = 0; i < files.size(); i++) {
+    for (uint32_t i = 0; i < files.size(); i++) {
         Napi::Object fileObject = Napi::Object::New(env);
         fileObject.Set("path", Napi::String::New(env, files[i].path));
         fileObject.Set("name", Napi::String::New(env, files[i].name));
@@ -137,6 +137,65 @@ Napi::Object ReadClipboardImageWrapped(const Napi::CallbackInfo& info) {
     return result;
 }
 
+Napi::Boolean WriteImageToClipboardWrapped(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    // 检查参数数量和类型
+    if (info.Length() < 1 || !info[0].IsBuffer()) {
+        // Napi::TypeError::New(env,"参数错误：需要一个Buffer类型的参数").ThrowAsJavaScriptException();
+        return Napi::Boolean::New(env, false);
+    }
+
+    // 获取Buffer数据
+    Napi::Buffer<uint8_t> buffer = info[0].As<Napi::Buffer<uint8_t>>();
+    size_t length = buffer.Length();
+    
+    // 调用功能函数
+    bool result = WriteImageToClipboard(buffer.Data(), length);
+
+    if (!result) {
+        // Napi::Error::New(env,"无法将图像设置到剪贴板").ThrowAsJavaScriptException();
+        return Napi::Boolean::New(env, false);
+    }
+
+    return Napi::Boolean::New(env, result);
+}
+
+Napi::Value GetFileIcon(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 1) {
+        Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    if (!info[0].IsString()) {
+        Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    std::string filePath = info[0].As<Napi::String>().Utf8Value();
+
+
+    IconData iconData = GetFileIconData(filePath);
+
+    if (iconData.buffer == nullptr) {
+        Napi::Error::New(env, "Failed to get file icon").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    Napi::Buffer<char> buffer = Napi::Buffer<char>::New(env, iconData.buffer, iconData.dataSize, [](Napi::Env, char* data) {
+        delete[] data;
+    });
+
+    Napi::Object result = Napi::Object::New(env);
+    result.Set(Napi::String::New(env, "buffer"), buffer);
+    result.Set(Napi::String::New(env, "width"), Napi::Number::New(env, iconData.width));
+    result.Set(Napi::String::New(env, "height"), Napi::Number::New(env, iconData.height));
+
+    return result;
+}
+
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set("getContentType", Napi::Function::New(env, GetClipboardContentTypeWrapped));
     exports.Set("clear", Napi::Function::New(env, clearClipboardWrapped));
@@ -146,9 +205,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set("readFiles", Napi::Function::New(env, ReadFilesFromClipboardWrapped));
     exports.Set("writeFiles", Napi::Function::New(env, WriteFilesToClipboardWrapped));
     exports.Set("readImage", Napi::Function::New(env, ReadClipboardImageWrapped));
-    // exports.Set("writeImage", Napi::Function::New(env, WriteImageToClipboardWrapped));
-    // exports.Set("saveImageToFile", Napi::Function::New(env, SaveClipboardImageToFileWrapped));
-    // exports.Set("getFileIcon", Napi::Function::New(env, GetFileIcon));
+    exports.Set("writeImage", Napi::Function::New(env, WriteImageToClipboardWrapped));
+    exports.Set("getFileIcon", Napi::Function::New(env, GetFileIcon));
     return exports;
 }
 

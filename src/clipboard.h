@@ -25,12 +25,12 @@ struct FileInfox {
 };
 
 
-// struct IconData {
-//     char* buffer;
-//     int width;
-//     int height;
-//     int dataSize;
-// };
+struct IconData {
+    char* buffer;
+    int width;
+    int height;
+    size_t dataSize;
+};
 
 enum class ClipboardContentType {
     Text,
@@ -46,7 +46,7 @@ bool clearClipboard();
 std::string ReadTextFromClipboard();
 std::string ReadHTMLFromClipboard();
 bool WriteTextToClipboard(const std::string& text);
-// IconData GetFileIconData(const std::wstring& filePath);
+IconData GetFileIconData(const std::string& filePath);
 // void FreeIconData(IconData& iconData);
 
 // std::wstring Utf8ToWstring(const std::string& str);
@@ -56,5 +56,5 @@ std::vector<FileInfox> ReadFilesFromClipboard();
 bool WriteFilesToClipboard(const std::vector<std::string>& files);
 
 ImageData ReadImageFromClipboard();
-// bool WriteImageToClipboard(const uint8_t* buffer, size_t bufferSize);
+bool WriteImageToClipboard(const uint8_t* buffer, size_t bufferSize);
 

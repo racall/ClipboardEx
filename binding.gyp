@@ -19,14 +19,13 @@
                 [
                     'OS=="win"',
                     {
-                        'sources': [ 
-                            # "src/windows_clipboard.cpp",
+                        'sources': [
                             "src/windows/common.cpp",
                             "src/windows/file.cpp",
                             "src/windows/image.cpp",
                             "src/windows/text_read.cpp",
                             "src/windows/text_write.cpp"
-                         ],
+                        ],
                         "libraries": [ "user32.lib", "shell32.lib", "gdi32.lib","Gdiplus.lib"],
                         "msvs_settings": {
                             "VCCLCompilerTool": {
@@ -42,10 +41,10 @@
                     {
                         'sources': [ 
                             "src/mac/common.mm",
-                            "src/mac/file.cpp",
-                            "src/mac/image.cpp",
-                            "src/mac/text_read.cpp",
-                            "src/mac/text_write.cpp"
+                            "src/mac/file.mm",
+                            "src/mac/image.mm",
+                            "src/mac/text_read.mm",
+                            "src/mac/text_write.mm"
                         ],
                         'link_settings': {
                             'libraries': [
