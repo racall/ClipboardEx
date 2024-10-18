@@ -20,6 +20,7 @@
                     'OS=="win"',
                     {
                         'sources': [
+                            "src/windows/utils.cpp",
                             "src/windows/common.cpp",
                             "src/windows/file.cpp",
                             "src/windows/image.cpp",

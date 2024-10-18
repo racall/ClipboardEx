@@ -1,96 +1,11 @@
 #define UNICODE
 #include "../clipboard.h"
+#include "utils.h"
 #include <shlobj.h>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
 #include <gdiplus.h>
 #include <gdiplusinit.h>
-#include <codecvt>
-#include <thread>
-#include <mutex>
 #define STB_IMAGE_IMPLEMENTATION
 #include "../stb_image.h"
-
-struct BitmapData {
-#ifdef _WIN32
-    HBITMAP hBitmap;
-#elif defined(__APPLE__)
-    void* nsImage;
-#endif
-    int width;
-    int height;
-    std::vector<unsigned char> pixels;
-};
-BitmapData _ReadImageFromClipboard()
-{
-    BitmapData result = {nullptr, 0, 0, {}};
-    if (!OpenClipboard(nullptr))
-        return result;
-
-    HBITMAP hBitmap = (HBITMAP)GetClipboardData(CF_BITMAP);
-    if (hBitmap == nullptr)
-    {
-        std::cout << "Failed to get bitmap data" << std::endl;
-        CloseClipboard();
-        return result;
-    }
-
-    BITMAP bmp;
-    if (GetObject(hBitmap, sizeof(BITMAP), &bmp) == 0)
-    {
-        std::cout << "Failed to get bitmap info" << std::endl;
-        CloseClipboard();
-        return result;
-    }
-
-    HDC hDC = GetDC(nullptr);
-    if (hDC == nullptr)
-    {
-        std::cout << "Failed to get DC" << std::endl;
-        CloseClipboard();
-        return result;
-    }
-
-    HDC hMemDC = CreateCompatibleDC(hDC);
-    if (hMemDC == nullptr)
-    {
-        std::cout << "Failed to create compatible DC" << std::endl;
-        ReleaseDC(nullptr, hDC);
-        CloseClipboard();
-        return result;
-    }
-    HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
-    BITMAPINFOHEADER bi;
-    bi.biSize = sizeof(BITMAPINFOHEADER);
-    bi.biWidth = bmp.bmWidth;
-    bi.biHeight = -bmp.bmHeight; // Top-down DIB
-    bi.biPlanes = 1;
-    bi.biBitCount = 32;
-    bi.biCompression = BI_RGB;
-    bi.biSizeImage = 0;
-    bi.biXPelsPerMeter = 0;
-    bi.biYPelsPerMeter = 0;
-    bi.biClrUsed = 0;
-    bi.biClrImportant = 0;
-
-    result.width = bmp.bmWidth;
-    result.height = bmp.bmHeight;
-    result.pixels.resize(4 * result.width * result.height);
-    if (GetDIBits(hMemDC, hBitmap, 0, result.height, result.pixels.data(), (BITMAPINFO *)&bi, DIB_RGB_COLORS) == 0)
-    {
-        std::cout << "Failed to get bitmap data" << std::endl;
-        result.pixels.clear();
-        result.width = 0;
-        result.height = 0;
-    }
-    SelectObject(hMemDC, hOldBitmap);
-    DeleteDC(hMemDC);
-    ReleaseDC(nullptr, hDC);
-    result.hBitmap = hBitmap;
-    CloseClipboard();
-    return result;
-}
 
 /**
  * Write image to clipboard
@@ -174,63 +89,6 @@ bool WriteImageToClipboard(const uint8_t* buffer, size_t bufferSize) {
     return true;
 }
 
-/**
- * Save bitmap to file
- * @param bmpData BitmapData
- * @param filePath std::wstring
- * @return bool
- */
-bool SaveBitmapToFile(const BitmapData &bmpData, const std::wstring &filePath)
-{
-    BITMAPFILEHEADER bmfHeader;
-    BITMAPINFOHEADER bi = {0};
-
-    bi.biSize = sizeof(BITMAPINFOHEADER);
-    bi.biWidth = bmpData.width;
-    bi.biHeight = bmpData.height;
-    bi.biPlanes = 1;
-    bi.biBitCount = 32;
-    bi.biCompression = BI_RGB;
-    bi.biSizeImage = bmpData.pixels.size();
-
-    DWORD dwBmpSize = bi.biSizeImage;
-    DWORD dwDIBSize = dwBmpSize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-
-    std::ofstream file(filePath, std::ios::out | std::ios::binary);
-    if (!file)
-    {
-        return false;
-    }
-
-    bmfHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-    bmfHeader.bfSize = dwDIBSize;
-    bmfHeader.bfType = 0x4D42; // BM
-
-    file.write(reinterpret_cast<char *>(&bmfHeader), sizeof(BITMAPFILEHEADER));
-    file.write(reinterpret_cast<char *>(&bi), sizeof(BITMAPINFOHEADER));
-    const unsigned char *pPixels = bmpData.pixels.data();
-    int rowSize = bmpData.width * 4; // 4 bytes per pixel (32-bit)
-    for (int i = bmpData.height - 1; i >= 0; --i)
-    {
-        file.write(reinterpret_cast<const char *>(pPixels + i * rowSize), rowSize);
-    }
-
-    file.close();
-    return true;
-}
-
-/**
- * Save clipboard image to file
- * @param filePath std::wstring
- * @return bool
- */
-bool SaveClipboardImageToFile(const std::wstring &filePath)
-{
-    BitmapData bmpData = _ReadImageFromClipboard();
-    if (!bmpData.hBitmap)
-        return false;
-    return SaveBitmapToFile(bmpData, filePath);
-}
 
 /**
  * Convert icon to icon data
@@ -293,14 +151,15 @@ IconData IconToIconData(HICON hIcon)
 
 /**
  * Get file icon data
- * @param filePath std::wstring
+ * @param filePath std::string
  * @return IconData
  */
-IconData GetFileIconData(const std::wstring &filePath)
+IconData GetFileIconData(const std::string& filePath)
 {
     IconData result = {nullptr, 0, 0, 0};
     SHFILEINFOW shFileInfo;
-    if (!SHGetFileInfoW(filePath.data(), 0, &shFileInfo, sizeof(SHFILEINFO), SHGFI_ICON | SHGFI_LARGEICON))
+    std::wstring wfilePath = Utf8ToWstring(filePath);
+    if (!SHGetFileInfoW(wfilePath.data(), 0, &shFileInfo, sizeof(SHFILEINFO), SHGFI_ICON | SHGFI_LARGEICON))
     {
         std::cout << "Failed to get file icon data" << std::endl;
         return result;
@@ -308,18 +167,6 @@ IconData GetFileIconData(const std::wstring &filePath)
 
     result = IconToIconData(shFileInfo.hIcon);
     return result;
-}
-
-void FreeIconData(IconData &iconData)
-{
-    if (iconData.buffer)
-    {
-        delete[] iconData.buffer;
-        iconData.buffer = nullptr;
-    }
-    iconData.width = 0;
-    iconData.height = 0;
-    iconData.dataSize = 0;
 }
 
 /**
@@ -421,4 +268,16 @@ ImageData ReadImageFromClipboard() {
     result.height = height;
     result.data.assign(data, data + size);
     return result;
+}
+
+void FreeIconData(IconData &iconData)
+{
+    if (iconData.buffer)
+    {
+        delete[] iconData.buffer;
+        iconData.buffer = nullptr;
+    }
+    iconData.width = 0;
+    iconData.height = 0;
+    iconData.dataSize = 0;
 }

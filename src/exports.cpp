@@ -116,6 +116,10 @@ Napi::Boolean WriteFilesToClipboardWrapped(const Napi::CallbackInfo& info) {
     return Napi::Boolean::New(env, WriteFilesToClipboard(files));
 }
 
+/**
+* Read image from clipboard
+* @return {width,height,size}
+*/
 Napi::Object ReadClipboardImageWrapped(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     Napi::Object result = Napi::Object::New(env);
@@ -137,6 +141,10 @@ Napi::Object ReadClipboardImageWrapped(const Napi::CallbackInfo& info) {
     return result;
 }
 
+/**
+ * Write image to clipboard
+ * @returns {Boolean}
+ */
 Napi::Boolean WriteImageToClipboardWrapped(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
@@ -153,14 +161,13 @@ Napi::Boolean WriteImageToClipboardWrapped(const Napi::CallbackInfo& info) {
     // 调用功能函数
     bool result = WriteImageToClipboard(buffer.Data(), length);
 
-    if (!result) {
-        // Napi::Error::New(env,"无法将图像设置到剪贴板").ThrowAsJavaScriptException();
-        return Napi::Boolean::New(env, false);
-    }
-
     return Napi::Boolean::New(env, result);
 }
 
+/**
+* Read icon from file
+* @return {width,height,buffer}
+*/
 Napi::Value GetFileIcon(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 

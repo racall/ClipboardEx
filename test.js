@@ -3,6 +3,7 @@ const clipboard = require('./index');
 const sharp = require('sharp');
 const fs = require('fs');
 
+
 function getType() {
     console.log("获取类型：",clipboard.getContentType())
 }
@@ -51,7 +52,7 @@ function getImage() {
         if (image.width > 0 && image.height > 0) {
             console.log(`图片尺寸: ${image.width}x${image.height}`);
             console.log(`图片数据长度: ${image.data.length} 字节`);
-            writeImageToFile(image.data, '/Users/xiaoyi/dev/node/ClipboardEx/clipboard_image_verify.png');
+            writeImageToFile(image.data, './clipboard_image_verify.png');
         } else {
             console.log("剪贴板中没有图片");
         }
@@ -60,8 +61,8 @@ function getImage() {
     }
 }
 function getFileIcon() {
-    console.log("\n读取剪贴板中的文件图标:");
-    const icon = clipboard.getFileIcon("/Users/xiaoyi/dev/node/ClipboardEx/package.json");
+    console.log("\n读取文件图标:");
+    const icon = clipboard.getFileIcon('C:\\Users\\brian\\Desktop\\controlmymonitor');
     console.log("icon: ", icon);
     if (icon.width > 0 && icon.height > 0) {
         console.log(`图标尺寸: ${icon.width}x${icon.height}`);
@@ -71,19 +72,13 @@ function getFileIcon() {
         console.log("写入剪贴板",c);
     }
 }
-getFileIcon();
-// getFiles();
-// getImage();
-// let a = fs.readFileSync('/Users/xiaoyi/dev/node/ClipboardEx/clipboard_image_verify.png');
-// const c = clipboard.writeImage(a);
-// console.log("写入剪贴板",c);
+getHtml();
 setTimeout(() => {
     getType();
-}, 1000);
+}, 500);
 
 
-
-// console.log("清理剪切板",clipboard.clear())
+// console.log("清理剪切板",clipboard.clear())프로그램이 클립보드에 접근할 수 있는 권한이 있습니다.
 // console.log("clipboard",clipboard);
 // function extractFragment(html) {
 //     const regex = /<!--StartFragment-->([\s\S]*?)<!--EndFragment-->/;

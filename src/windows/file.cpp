@@ -1,5 +1,6 @@
 #define UNICODE
 #include "../clipboard.h"
+#include "utils.h"
 #include <shlobj.h>
 #include <filesystem>
 #include <fstream>
@@ -7,11 +8,11 @@
 
 
 /**
- * 从剪切板中读取文件信息
+ * Read file info from clipboard
  * @return vector of FileInfo
  */
-std::vector<FileInfo> ReadFilesFromClipboard() {
-    std::vector<FileInfo> files;
+std::vector<FileInfox> ReadFilesFromClipboard() {
+    std::vector<FileInfox> files;
     if (!OpenClipboard(nullptr)) return files;
     
     HDROP hDrop = (HDROP)GetClipboardData(CF_HDROP);
@@ -30,7 +31,7 @@ std::vector<FileInfo> ReadFilesFromClipboard() {
         std::wstring fileName = std::filesystem::path(fullPath).filename().wstring();
         uintmax_t fileSize = std::filesystem::file_size(fullPath);
 
-        files.push_back({ fullPath, fileName, fileSize });
+        files.push_back({ WstringToUtf8(fullPath), WstringToUtf8(fileName), fileSize });
     }
     
     CloseClipboard();
@@ -38,11 +39,11 @@ std::vector<FileInfo> ReadFilesFromClipboard() {
 }
 
 /**
- * 将文件写入剪切板
+ * Write file to clipboard
  * @param files vector of file paths
  * @return true if success
  */
-bool WriteFilesToClipboard(const std::vector<std::wstring>& files) {
+bool WriteFilesToClipboard(const std::vector<std::string>& files) {
     if (!OpenClipboard(nullptr)) return false;
     
     EmptyClipboard();
@@ -63,8 +64,10 @@ bool WriteFilesToClipboard(const std::vector<std::wstring>& files) {
     pDropFiles->fWide = TRUE;
     
     wchar_t* pFilenames = reinterpret_cast<wchar_t*>(reinterpret_cast<char*>(pDropFiles) + sizeof(DROPFILES));
-    for (const auto& file : files) {
-        wcscpy_s(pFilenames, file.length() + 1, file.c_str());
+    for (const auto &file : files) {
+        std::wstring wfile = Utf8ToWstring(file);
+        wcscpy_s(pFilenames, wfile.length() + 1, wfile.c_str());
+        
         pFilenames += file.length() + 1;
     }
     *pFilenames = L'\0';  // 额外的null终止符

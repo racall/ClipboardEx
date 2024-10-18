@@ -12,7 +12,7 @@
     "test": "node test.js",
     "install": "npx node-gyp-build",
     "prebuild": "node build.js",
-    "dev:msvc": "npx node-gyp configure --msvs_version=2022",
+    "dev:msvs": "npx node-gyp configure --msvs_version=2022",
     "dev:xcode": "npx node-gyp configure -- -f xcode"
   },
   "keywords": [],
