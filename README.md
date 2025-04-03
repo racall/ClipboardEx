@@ -1,3 +1,7 @@
+#### Node.js调用剪切板扩展
+
+支持windows和macOS
+
 #### 编译
 ```bash
 pnpm prebuild
