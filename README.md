@@ -11,6 +11,9 @@
 pnpm prebuild
 ```
 
+#### 使用
+
+使用案例可以参考test.js文件
 
 参考：
 
